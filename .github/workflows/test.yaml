@@ -1,0 +1,47 @@
+name: FastAPI CI/CD (Pytest & k6 E2E)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Repo Checkout
+      uses: actions/checkout@v4
+
+    - name: Python Setup
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Python deps installation
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Unit and Integration Tests (Pytest)
+      run: |
+        pytest -v
+
+    - name: Start FastAPI server in background
+      run: |
+        uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+        # wait for the server to start
+        sleep 3
+
+    - name: k6 installation
+      run: |
+        sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C047CFA7FA
+        echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+        sudo apt-get update
+        sudo apt-get install k6
+
+    - name: Run k6 E2E Load Test
+      run: |
+        k6 run k6/e2e_test.js

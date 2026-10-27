@@ -1,0 +1,30 @@
+name: FastAPI Integration & Unit Tests
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Repository Checkout
+      uses: actions/checkout@v4
+
+    - name: Python Setup
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Dependencies Installation
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Running Unit and Integration Tests
+      run: |
+        pytest -v
