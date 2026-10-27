@@ -47,3 +47,21 @@ pytest tests/test_unit.py -v
 #int tests
 pytest tests/test_integration.py -v
 ```
+
+## Run E2E
+### Bash
+```
+sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C047CFA7FA
+echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+sudo apt-get update && sudo apt-get install k6
+```
+### Windows
+```
+winget install grafana.k6
+```
+### Run dev server
+```
+source venv/bin/activate
+uvicorn app.main:app --reload
+k6 run k6/e2e_test.js # in parallel terminal
+```
