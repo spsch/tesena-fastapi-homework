@@ -11,7 +11,7 @@ Sample project of a simple RESTful API built on the **FastAPI** framework that s
 
 ### **clone and enter the directory "
         ```bash
-        git clone <url-repozitare>
+        git clone <repo url>
         cd tesena-fastapi-homework
         ```
 ### virtual env
